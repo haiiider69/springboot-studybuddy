@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 
 export default function Feed() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [posts, setPosts] = useState([])
   const [form, setForm] = useState({ title: '', description: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [joiningPostId, setJoiningPostId] = useState(null)
 
   const fetchPosts = async () => {
     try {
@@ -41,6 +44,18 @@ export default function Feed() {
     } catch {}
   }
 
+  const handleStudyTogether = async (post) => {
+    setJoiningPostId(post.id)
+    try {
+      const res = await api.post(`/api/groups/from-post/${post.id}/user/${user.userId}`)
+      navigate('/groups', { state: { activeGroupId: res.data.id } })
+    } catch {
+      setError('Failed to create group')
+    } finally {
+      setJoiningPostId(null)
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
@@ -71,7 +86,7 @@ export default function Feed() {
         {posts.map(post => (
           <div key={post.id} className="bg-white rounded-2xl border border-gray-200 p-5">
             <div className="flex items-start justify-between gap-4">
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold text-gray-800">{post.title}</h3>
                 {post.description && <p className="text-sm text-gray-500 mt-1">{post.description}</p>}
                 <div className="flex items-center gap-3 mt-3">
@@ -81,11 +96,22 @@ export default function Feed() {
                   </span>
                 </div>
               </div>
-              {post.authorUsername === user.username && post.status === 'OPEN' && (
-                <button onClick={() => handleClose(post.id)} className="text-xs text-gray-400 hover:text-red-500 whitespace-nowrap">
-                  Close
-                </button>
-              )}
+              <div className="flex flex-col gap-2 items-end">
+                {post.status === 'OPEN' && post.authorUsername !== user.username && (
+                  <button
+                    onClick={() => handleStudyTogether(post)}
+                    disabled={joiningPostId === post.id}
+                    className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {joiningPostId === post.id ? 'Creating...' : '📚 Study Together'}
+                  </button>
+                )}
+                {post.authorUsername === user.username && post.status === 'OPEN' && (
+                  <button onClick={() => handleClose(post.id)} className="text-xs text-gray-400 hover:text-red-500 whitespace-nowrap">
+                    Close
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}

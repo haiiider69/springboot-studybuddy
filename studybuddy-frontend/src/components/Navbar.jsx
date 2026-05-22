@@ -19,6 +19,10 @@ export default function Navbar() {
             <Link to="/" className="text-sm text-gray-600 hover:text-indigo-600">Feed</Link>
             <Link to="/groups" className="text-sm text-gray-600 hover:text-indigo-600">Groups</Link>
             <Link to="/ai" className="text-sm text-gray-600 hover:text-indigo-600">AI Tools</Link>
+            {user?.role === 'ADMIN' && (
+                          <Link to="/admin" className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Admin</Link>
+                        )}
+            <Link to="/profile" className="text-sm text-gray-600 hover:text-indigo-600">Profile</Link>
           </>
         )}
       </div>
@@ -37,6 +41,7 @@ export default function Navbar() {
           <div className="flex gap-2">
             <Link to="/login" className="text-sm px-3 py-1.5 rounded-lg hover:bg-gray-100">Login</Link>
             <Link to="/register" className="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700">Register</Link>
+
           </div>
         )}
       </div>

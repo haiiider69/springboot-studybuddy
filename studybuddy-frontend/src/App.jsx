@@ -6,7 +6,8 @@ import Feed from './pages/Feed'
 import Groups from './pages/Groups'
 import AiTools from './pages/AiTools'
 import Navbar from './components/Navbar'
-
+import Profile from './pages/Profile'
+import Admin from './pages/Admin'
 function PrivateRoute({ children }) {
   const { user } = useAuth()
   return user ? children : <Navigate to="/login" />
@@ -22,6 +23,8 @@ export default function App() {
         <Route path="/" element={<PrivateRoute><Feed /></PrivateRoute>} />
         <Route path="/groups" element={<PrivateRoute><Groups /></PrivateRoute>} />
         <Route path="/ai" element={<PrivateRoute><AiTools /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
       </Routes>
     </div>
   )
