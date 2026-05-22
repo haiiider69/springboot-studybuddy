@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.campus.studybuddy.dto.UserProfileRequest;
+import com.campus.studybuddy.exception.ApiException;
+import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,8 +57,21 @@ public class UserService {
         res.setUsername(user.getUsername());
         res.setEmail(user.getEmail());
         res.setMajor(user.getMajor());
-        res.setYear(user.getYear());
+        res.setStudyYear(user.getYear());
+        res.setBio(user.getBio());
+        res.setProfilePicture(user.getProfilePicture());
+        res.setRole(user.getRole());
         return res;
     }
+    public UserResponse updateProfile(Long id, UserProfileRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
+        if (request.getBio() != null) user.setBio(request.getBio());
+        if (request.getMajor() != null) user.setMajor(request.getMajor());
+        if (request.getStudyYear() != null) user.setYear(request.getStudyYear());
+        if (request.getProfilePicture() != null) user.setProfilePicture(request.getProfilePicture());
+
+        return toResponse(userRepository.save(user));
+    }
 }

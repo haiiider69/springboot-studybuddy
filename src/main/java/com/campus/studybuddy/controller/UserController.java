@@ -1,6 +1,7 @@
 package com.campus.studybuddy.controller;
 
 import com.campus.studybuddy.dto.RegisterRequest;
+import com.campus.studybuddy.dto.UserProfileRequest;
 import com.campus.studybuddy.dto.UserResponse;
 import com.campus.studybuddy.service.UserService;
 import jakarta.validation.Valid;
@@ -30,5 +31,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateProfile(
+            @PathVariable Long id,
+            @RequestBody UserProfileRequest request) {
+        return ResponseEntity.ok(userService.updateProfile(id, request));
     }
 }

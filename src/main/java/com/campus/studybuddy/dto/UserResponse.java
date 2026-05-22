@@ -8,5 +8,8 @@ public class UserResponse {
     private String username;
     private String email;
     private String major;
-    private String year;
+    private String studyYear;
+    private String bio;
+    private String profilePicture;
+    private String role;
 }

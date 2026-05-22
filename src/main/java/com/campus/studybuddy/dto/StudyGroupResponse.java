@@ -9,4 +9,5 @@ public class StudyGroupResponse {
     private String name;
     private String subject;
     private List<String> memberUsernames;
+    private List<MemberResponse> members;
 }

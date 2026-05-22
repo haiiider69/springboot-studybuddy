@@ -43,4 +43,10 @@ public class StudyGroupController {
     public ResponseEntity<List<StudyGroupResponse>> getGroupsByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(studyGroupService.getGroupsByUser(userId));
     }
+    @PostMapping("/from-post/{postId}/user/{userId}")
+    public ResponseEntity<StudyGroupResponse> createGroupFromPost(
+            @PathVariable Long postId,
+            @PathVariable Long userId) {
+        return ResponseEntity.ok(studyGroupService.createGroupFromPost(postId, userId));
+    }
 }

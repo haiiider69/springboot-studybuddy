@@ -18,6 +18,7 @@ public class StudyPost {
 
     private String description;
 
+    @Column(name = "post_status")
     @Enumerated(EnumType.STRING)
     private Status status = Status.OPEN;
 
