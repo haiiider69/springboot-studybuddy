@@ -24,6 +24,7 @@ public class StudyGroupService {
     private final StudyPostRepository studyPostRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public StudyGroupResponse createGroup(StudyGroupRequest request) {
         StudyGroup group = new StudyGroup();
@@ -38,8 +39,20 @@ public class StudyGroupService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
-        if (!group.getMembers().contains(user))
+        if (!group.getMembers().contains(user)) {
             group.getMembers().add(user);
+            studyGroupRepository.save(group);
+
+            // Notify all existing members
+            group.getMembers().forEach(member -> {
+                if (!member.getId().equals(userId)) {
+                    notificationService.createNotification(
+                            member.getId(),
+                            "👤 " + user.getUsername() + " joined " + group.getName()
+                    );
+                }
+            });
+        }
 
         return toResponse(studyGroupRepository.save(group));
     }

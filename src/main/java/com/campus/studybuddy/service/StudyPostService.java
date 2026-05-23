@@ -12,7 +12,7 @@ import com.campus.studybuddy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import com.campus.studybuddy.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +23,8 @@ public class StudyPostService {
     private final StudyPostRepository studyPostRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final NotificationService notificationService;
+
 
     public StudyPostResponse createPost(StudyPostRequest request) {
         User author = userRepository.findById(request.getAuthorId())
@@ -38,7 +40,15 @@ public class StudyPostService {
                     .orElseThrow(() -> new ApiException("Category not found", HttpStatus.CONFLICT));
             post.setCategory(category);
         }
-
+// Notify all users about new post
+        userRepository.findAll().forEach(u -> {
+            if (!u.getId().equals(request.getAuthorId())) {
+                notificationService.createNotification(
+                        u.getId(),
+                        "📚 " + author.getUsername() + " posted: " + post.getTitle()
+                );
+            }
+        });
         return toResponse(studyPostRepository.save(post));
     }
 
